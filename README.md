@@ -1,5 +1,9 @@
 # SilentShift
 
+[![ci](https://github.com/forit-tech/SilentShift/actions/workflows/ci.yml/badge.svg)](https://github.com/forit-tech/SilentShift/actions/workflows/ci.yml)
+![python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)
+![licence](https://img.shields.io/badge/licence-MIT-green)
+
 Drift and behavioural change detection in multivariate server telemetry, with a controlled
 injection framework that supplies ground truth.
 
@@ -352,7 +356,8 @@ make test lint typecheck
 `artifacts/provenance.json`.
 
 Checks actually executed on this codebase: `pytest` 156 passed / 1 skipped, `ruff check` clean,
-`mypy` clean over 19 source files.
+`mypy` clean over 19 source files — locally and in CI on Python 3.11 and 3.12. The suite builds
+its own fixtures and reads no dataset, so CI runs in under a minute without downloading SMD.
 
 ## Limitations
 
