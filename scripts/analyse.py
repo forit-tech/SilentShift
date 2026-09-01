@@ -201,8 +201,8 @@ def main() -> int:
         _write(policy_table, art / "policy_auc.csv")
 
         # `reset_on_alarm` is currently identical to `fixed`: the alarm feedback loop is not
-        # wired (see docs/REVIEW.md R2-8). Plotting it as a third row would imply a comparison
-        # that was never made.
+        # wired -- see the README section on defects found in this code. Plotting it as a third row
+        # would imply a comparison that was never made.
         exercised = policy_table[policy_table["policy"] != "reset_on_alarm"].rename(
             columns={"auc": "recall"}
         )

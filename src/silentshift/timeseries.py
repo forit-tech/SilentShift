@@ -36,8 +36,8 @@ def autocorrelation_time(x: np.ndarray, max_lag: int = 600, threshold: float = 0
     near lag 300 and rises again near lag 600, which is a daily cycle rather than noise.
     Thinning at 0.1 would demand steps of 231-1124 rows and leave a handful of samples per
     window; at 0.3 the step is roughly 70-190 rows, which keeps ~20 effective samples in a
-    3000-row window. Both numbers are reported in docs/METHODOLOGY.md so the reader can see
-    the trade rather than take the constant on faith.
+    2500-row window. Both numbers are in the README so the reader can see the trade rather than
+    take the constant on faith.
     """
     if x.ndim != 2:
         raise ValueError("expected a 2-D array of shape (rows, features)")
