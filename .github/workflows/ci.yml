@@ -1,8 +1,8 @@
 name: ci
 
-# The test suite deliberately needs no dataset: every test builds its own fixtures, so CI
-# runs in seconds and never downloads the 466 MB SMD archive. Verified by running the suite
-# with data/raw removed.
+# The test suite deliberately needs no dataset: every test builds its own fixtures, so CI runs
+# in seconds and never downloads the 466 MB SMD archive. Verified by running the suite with
+# data/raw removed.
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
   pull_request:
 
 jobs:
-  checks:
+  test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -24,5 +24,19 @@ jobs:
           cache: pip
       - run: pip install -e ".[dev]"
       - run: ruff check src tests scripts
-      - run: mypy
       - run: pytest -q
+
+  typecheck:
+    # 3.12 only, and not for our code's sake. Recent numpy stubs use `type` statements, which
+    # mypy rejects when told to target 3.11, so the job would fail on a dependency rather than
+    # on anything in this repository. Type checking is version-independent here; the test
+    # matrix above is what actually covers 3.11.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: mypy --python-version 3.12
