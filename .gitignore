@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+.idea/
+.vscode/
+
+# Raw SMD is 466 MB and is fetched by `make data`; never committed.
+data/raw/
+data/interim/
+
+# Large intermediate score tables. The small derived tables and the figures the README
+# cites are committed, so a reader can check the numbers without a 20-minute rerun.
+artifacts/*.log
+artifacts/calibration_scores.csv
+artifacts/scores_*.csv
+artifacts/policy_scores.csv
+artifacts/negative_control.csv

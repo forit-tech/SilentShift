@@ -1,0 +1,88 @@
+# SilentShift experiment configuration.
+#
+# Machines are split three ways and the split is by machine, never by row: the 38 signals of
+# one machine resemble each other across time far more than they resemble another machine,
+# so a row-level split would leak a machine's behavioural profile into calibration.
+#
+# Each split spans all three SMD groups (machine-1-*, machine-2-*, machine-3-*), because the
+# groups differ systematically and a split confined to one group would measure the group
+# rather than the method.
+
+data:
+  smd_root: data/raw/SMD
+
+  # Thresholds are calibrated here, on drift-free streams only. Never used for reporting.
+  calibration_machines:
+    [machine-1-1, machine-1-2, machine-1-3,
+     machine-2-1, machine-2-2, machine-2-3, machine-2-4,
+     machine-3-1, machine-3-2, machine-3-3, machine-3-4]
+
+  # Design, iteration and error analysis happen here.
+  development_machines:
+    [machine-1-4, machine-1-5, machine-1-6,
+     machine-2-5, machine-2-6, machine-2-7,
+     machine-3-5, machine-3-6, machine-3-7, machine-3-8, machine-3-9]
+
+  # Touched once, at the end, with the pipeline already frozen.
+  heldout_machines:
+    [machine-1-7, machine-1-8,
+     machine-2-8, machine-2-9,
+     machine-3-10, machine-3-11]
+
+# Window sizes are set by the autocorrelation of the data, not by convenience. SMD's mean
+# absolute autocorrelation only falls below 0.3 after ~70-190 rows, so a 500-row window holds
+# roughly 3 effectively independent samples and no two-sample test can work there. At 2500
+# rows the effective sample size is ~15-35, which is the smallest scale that supports the
+# tests below. This is the binding constraint on how fast any of this can possibly react:
+# no method here can be expected to notice a change in under ~40 hours of telemetry.
+#
+# The upper bound is set by data, not preference. The smallest machine has 23688 clean rows;
+# after reserving 35% for threshold calibration, 15397 remain, so an evaluation stream is
+# capped at 14000 rows.
+window:
+  size: 2500           # rows per scored window (1-minute cadence -> ~42h)
+  stride: 500          # onset resolution of ~8h
+  reference_size: 4000 # first 4000 rows are the initial reference and are never scored
+  policy: fixed        # fixed | sliding | reset_on_alarm; overridden by the policy study
+
+injection:
+  onset_fraction: 0.6      # leaves 4 fully-clean, 5 straddling and 7 fully-post windows
+  n_affected_features: 6   # of 38
+  magnitudes: [0.5, 1.0, 2.0, 4.0]   # in units of pre-onset per-feature sigma
+  gradual_ramp: 2500       # rows over which the mixture ramp completes
+  block_shuffle_length: 150 # correlation_break preserves autocorrelation inside 150-row blocks
+  seeds: [0, 1]
+  scenarios:
+    [none, sudden_shift, gradual_shift, incremental_shift, variance_shift, correlation_break]
+
+evaluation:
+  tolerance_windows: 4              # a detection later than this is scored as a miss
+  # Expressed per *window* so calibration streams (4 windows) and evaluation streams (16)
+  # are directly comparable. 0.125/window matches the earlier 0.5-per-4-window budget.
+  target_false_alarms_per_stream: 0.5
+  target_false_alarms_per_window: 0.125
+  bootstrap_samples: 2000
+  bootstrap_seed: 20260831
+
+detectors:
+  [ks_max, ks_bonferroni, psi_max, wasserstein_max, js_max,
+   ks_max_thinned, psi_max_thinned, wasserstein_max_thinned, js_max_thinned,
+   c2st, c2st_thinned, pca_recon, iforest_mean, random]
+
+artifacts_dir: artifacts
+
+extra:
+  stream_length: 14000
+  # Calibration streams are shorter because the calibration half is smaller; more seeds
+  # compensate, giving 24 clean windows per machine to place a threshold on.
+  calibration_stream_length: 8000
+  # 12 seeds x 4 windows = 48 clean windows per machine. The first run used 6 seeds (24
+  # windows) and the threshold -- an 87.5th percentile -- was too noisy to transfer.
+  calibration_seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  # The policy study is deliberately narrow: three representative detectors at one
+  # magnitude, because the interaction of interest is policy x drift type, not detector.
+  policy_study_detectors: [ks_max, c2st, pca_recon]
+  policy_study_magnitude: 2.0
+  # Per-stream false-positive budget for the oracle operating point. A detector that ignores
+  # the data lands exactly here, which is what makes the recall column readable.
+  target_stream_false_positive_rate: 0.1
