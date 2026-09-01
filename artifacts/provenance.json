@@ -1,0 +1,60 @@
+{
+  "smd_root": "C:\\Users\\sunmo\\Desktop\\myjob\\portfolio\\silentshift\\data\\raw\\SMD",
+  "dataset_sha256": "831ba0734f6c1a5bc08bb2b3794f68c7adcb7f595dc43451cad840e825d5d7aa",
+  "n_machines": 28,
+  "config": {
+    "window": {
+      "size": 2500,
+      "stride": 500,
+      "reference_size": 4000,
+      "policy": "fixed"
+    },
+    "injection": {
+      "onset_fraction": 0.6,
+      "n_affected_features": 6,
+      "magnitudes": [
+        0.5,
+        1.0,
+        2.0,
+        4.0
+      ],
+      "gradual_ramp": 2500,
+      "block_shuffle_length": 150,
+      "seeds": [
+        0,
+        1
+      ],
+      "scenarios": [
+        "none",
+        "sudden_shift",
+        "gradual_shift",
+        "incremental_shift",
+        "variance_shift",
+        "correlation_break"
+      ]
+    },
+    "evaluation": {
+      "tolerance_windows": 4,
+      "target_false_alarms_per_stream": 0.5,
+      "target_false_alarms_per_window": 0.125,
+      "bootstrap_samples": 2000,
+      "bootstrap_seed": 20260831
+    },
+    "detectors": [
+      "ks_max",
+      "ks_bonferroni",
+      "psi_max",
+      "wasserstein_max",
+      "js_max",
+      "ks_max_thinned",
+      "psi_max_thinned",
+      "wasserstein_max_thinned",
+      "js_max_thinned",
+      "c2st",
+      "c2st_thinned",
+      "pca_recon",
+      "iforest_mean",
+      "random"
+    ]
+  }
+}

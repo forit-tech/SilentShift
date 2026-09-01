@@ -1,0 +1,5 @@
+detector,n_windows,corr_score_vs_anomaly_density,alarm_rate_on_test_half,mean_anomaly_fraction
+c2st,176,0.125,0.534,0.014
+iforest_mean,176,0.065,0.784,0.014
+ks_max,176,0.154,0.739,0.014
+pca_recon,176,0.084,0.631,0.014

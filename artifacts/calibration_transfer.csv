@@ -1,0 +1,15 @@
+detector,target_alarms_per_window,achieved_alarms_per_window,inflation_factor,null_windows
+c2st,0.125,0.3182,2.55,352
+c2st_thinned,0.125,0.2528,2.02,352
+iforest_mean,0.125,0.233,1.86,352
+js_max,0.125,0.3977,3.18,352
+js_max_thinned,0.125,0.2983,2.39,352
+ks_bonferroni,0.125,0.0,0.0,352
+ks_max,0.125,0.5114,4.09,352
+ks_max_thinned,0.125,0.4091,3.27,352
+pca_recon,0.125,0.2188,1.75,352
+psi_max,0.125,0.4915,3.93,352
+psi_max_thinned,0.125,0.321,2.57,352
+random,0.125,0.1534,1.23,352
+wasserstein_max,0.125,0.3722,2.98,352
+wasserstein_max_thinned,0.125,0.2926,2.34,352
